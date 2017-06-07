@@ -17,8 +17,8 @@ clf, classes_names, stdSlr, k, voc = joblib.load("bofnew.pkl")
 image_paths = []
 image_classes = []
 
-#train_path = "dataset/test/"
-train_path = "dataset/train/"
+train_path = "dataset/test/"
+#train_path = "dataset/train/"
 training_names = os.listdir(train_path)
 class_id=0
 for training_name in training_names:
@@ -28,9 +28,9 @@ for training_name in training_names:
     image_classes+=[class_id]*len(class_path)
     
 des_list = []
-
+print "Start"
 for image_path in image_paths:
-    #print image_paths
+    print image_path
     im = io.imread(image_path)
     image = color.rgb2gray(im)
     image = cv2.resize(image, (250, 250)) 
@@ -40,8 +40,8 @@ for image_path in image_paths:
     #print fd.shape
     fd = np.float32(fd)
     fd=fd.reshape(72,25)
-    des_list.append((image_path, fd)) 
-    
+    des_list.append((image_path, fd))
+print "End"
 # Descriptors vertically in a numpy array
 descriptors = des_list[0][1]
 for image_path, descriptor in des_list[1:]:
@@ -68,9 +68,16 @@ test_features = stdSlr.transform(test_features)
 
 predictions =  [classes_names[i] for i in clf.predict(test_features)]
 
+
+bdc= predictions,test_features,test_labels
+joblib.dump(bdc,"pre_test_labels_test_SGD")
 cont_error=0
+indices=[]
+indic=0
 for ind in range(len(predictions)):
     if predictions[ind]!=test_labels[ind]:
         print (predictions[ind],test_labels[ind])
+        indices.append(indic)
         cont_error+=1
-
+    indic+=1
+print cont_error,indic

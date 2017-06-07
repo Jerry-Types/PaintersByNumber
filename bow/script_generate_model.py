@@ -4,6 +4,7 @@ import imutils
 import numpy as np
 import os
 from sklearn.svm import LinearSVC
+from sklearn import linear_model
 from sklearn.externals import joblib
 from scipy.cluster.vq import *
 from sklearn.preprocessing import StandardScaler
@@ -28,7 +29,7 @@ for training_name in training_names:
     class_id+=1
 
 print "Se van a procesar lo siguientes artistas"
-print image_classes,image_paths
+#print image_classes,image_paths
 
 des_list = []
 contador = 1
@@ -36,6 +37,7 @@ contador = 1
 print "Start Here"
 for image_path in image_paths:
     #print contador
+    print image_path
     im = io.imread(image_path)
     image = color.rgb2gray(im)
     image = cv2.resize(image, (250, 250)) 
@@ -75,9 +77,9 @@ idf = np.array(np.log((1.0*len(image_paths)+1) / (1.0*nbr_occurences + 1)), 'flo
 stdSlr = StandardScaler().fit(im_features)
 im_features = stdSlr.transform(im_features)
 
-clf = LinearSVC()
+clf = linear_model.SGDClassifier()
 clf.fit(im_features, np.array(image_classes))
 
-# Save the SVM
-joblib.dump((clf, training_names, stdSlr, k, voc), "bofnew.pkl", compress=3)    
+# Save the SVM.SGD
+joblib.dump((clf, training_names, stdSlr, k, voc), "bofnew_SGD.pkl", compress=3)    
     
